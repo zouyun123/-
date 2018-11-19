@@ -1,10 +1,10 @@
 package com.pengllrn.tegm.activity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
@@ -12,17 +12,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.pengllrn.tegm.Aoao.LoginStatus;
 import com.pengllrn.tegm.R;
 import com.pengllrn.tegm.bean.User;
 import com.pengllrn.tegm.gson.ParseJson;
 import com.pengllrn.tegm.internet.OkHttp;
 import com.pengllrn.tegm.utils.ActivityCollector;
-import com.pengllrn.tegm.utils.Encryp;
 import com.pengllrn.tegm.utils.SharedHelper;
 import com.pengllrn.tegm.constant.Constant;
 import java.util.ArrayList;
@@ -49,15 +49,20 @@ public class LoginActivity extends AppCompatActivity {
             switch (msg.what) {
                 case 0x2017:
                     String responseData = (msg.obj).toString();
-                    if (!responseData.equals("error")) {
-                        User user = mParseJson.Json2User(responseData);
-                        sharedHelper = new SharedHelper(getApplicationContext());
-                        sharedHelper.save(user);
+                    LoginStatus loginStatus = mParseJson.Json2LoginStatus(responseData);
+                    int statusValues = loginStatus.getStatus();
+                    String Msg = loginStatus.getMsg();
+                    System.out.println(statusValues);
+                    System.out.println(Msg);
+                    if (statusValues == 0) {
+//                        User user = mParseJson.Json2User(responseData);
+//                        sharedHelper = new SharedHelper(getApplicationContext());
+//                        sharedHelper.save(user);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
-                        Toast.makeText(getApplicationContext(), "欢迎您，" + sharedHelper.readbykey("username"), Toast.LENGTH_SHORT).show();
-                        user_id.setText("");
-                        passward.setText("");
+                        Toast.makeText(getApplicationContext(), "欢迎您，" + loginStatus.getUsername(), Toast.LENGTH_SHORT).show();
+//                        user_id.setText("");
+//                        passward.setText("");
                     } else {
                         Toast.makeText(getApplicationContext(), "账号或密码错误", Toast.LENGTH_SHORT).show();
                     }
@@ -111,12 +116,17 @@ public class LoginActivity extends AppCompatActivity {
                     passward.setFocusable(true);
                 } else {
                     //TODO 密码加密
+                    SharedPreferences.Editor editor = getSharedPreferences("saveduser",MODE_PRIVATE).edit();
+                    editor.putString("loginid",user_id.getText().toString());
+                    editor.apply();
                     OkHttp okHttp = new OkHttp(getApplicationContext(), mHandler);
                     RequestBody requestBody = new FormBody.Builder()
-                            .add("userid", user_id.getText().toString())
-                            .add("password", new Encryp().md5(passward.getText().toString()))
+                            .add("loginid", user_id.getText().toString())
+                            /*.add("password", new Encryp().md5(passward.getText().toString()))*/
+                            .add("password",passward.getText().toString())
                             .build();
-                    okHttp.postDataFromInternet(applyUrl, requestBody);
+                    okHttp.postDataWithCookie(applyUrl, requestBody);
+
                 }
             }
         });

@@ -5,7 +5,7 @@ package com.pengllrn.tegm.bean;
  */
 
 public class User {
-    private String userid;
+    private String loginid;
     private String username;
     private Boolean isOfficial;
     private String usertype;
@@ -16,8 +16,8 @@ public class User {
     private String qq;
     private String regist_time;
 
-    public String getUserid(){
-        return userid;
+    public String getLoginid(){
+        return loginid;
     }
 
     public String getUsername() {

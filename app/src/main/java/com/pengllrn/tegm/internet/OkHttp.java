@@ -1,6 +1,7 @@
 package com.pengllrn.tegm.internet;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -9,10 +10,16 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -46,13 +53,30 @@ public class OkHttp {
         this.handler = handler;
     }
 
-    public void postDataFromInternet(final String path, final RequestBody requestBody) {
+
+
+    public void postDataWithCookie(final String path, final RequestBody requestBody) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     OkHttpClient client = new OkHttpClient();
-                    //用post提交键值对格式的数据
+                    client = new OkHttpClient.Builder().cookieJar(new CookieJar() {
+                        private final HashMap<String,List<Cookie>> cookieStore = new HashMap<String, List<Cookie>>();
+                        @Override
+                        public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                            cookieStore.put(url.host(), cookies);
+                            SharedPreferences.Editor editor = mContext.getSharedPreferences("mycookie",Context.MODE_PRIVATE).edit();
+                            editor.putString("sessionid",String.valueOf(cookieStore.get(url.host()).get(0)));
+                            editor.apply();
+                        }
+
+                        @Override
+                        public List<Cookie> loadForRequest(HttpUrl url) {
+                            List<Cookie> cookies = cookieStore.get(url.host());
+                            return cookies != null ? cookies : new ArrayList<Cookie>();
+                        }
+                    }).build();
                     Request request = new Request.Builder()
                             .url(path)
                             .post(requestBody)
@@ -64,17 +88,59 @@ public class OkHttp {
                         msg.what = POSTOK;
                         msg.obj = responseData;
                         handler.sendMessage(msg);
+                        System.out.println("Connected");
+                    } else {
+                        Message msg = new Message();
+                        msg.what = WRANG;
+                        handler.sendMessage(msg);
+                        System.out.println("Not response");
+                    }
+                }catch (IOException e) {
+                    Message msg = new Message();
+                    msg.what = EXCEPTION;
+                    handler.sendMessage(msg);
+                    e.printStackTrace();
+                    System.out.println("Error");
+                }
+            }
+        }).start();
+    }
+
+    public void postDataFromInternet(final String path, final RequestBody requestBody) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    //用post提交键值对格式的数据
+                    SharedPreferences pref = mContext.getSharedPreferences("mycookie",Context.MODE_PRIVATE);
+                    String sessionid = pref.getString("sessionid","");
+                    Request request = new Request.Builder()
+                            .addHeader("cookie",sessionid)
+                            .url(path)
+                            .post(requestBody)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    if (response.isSuccessful()) {
+                        String responseData = response.body().string();
+                        Message msg = new Message();
+                        msg.what = POSTOK;
+                        msg.obj = responseData;
+                        handler.sendMessage(msg);
+                        System.out.println("Connected");
                     } else {
                         //TODO 错误报告
                         Message msg = new Message();
                         msg.what = WRANG;
                         handler.sendMessage(msg);
+                        System.out.println("Not response");
                     }
                 } catch (IOException e) {
                     Message msg = new Message();
                     msg.what = EXCEPTION;
                     handler.sendMessage(msg);
                     e.printStackTrace();
+                    System.out.println("Error");
                 }
             }
         }).start();
@@ -87,6 +153,7 @@ public class OkHttp {
                 try {
                     OkHttpClient client = new OkHttpClient();
                     //用post提交键值对格式的数据
+
                     Request request = new Request.Builder()
                             .url(path)
                             .post(requestBody)
@@ -119,8 +186,11 @@ public class OkHttp {
             public void run() {
                 try {
                     OkHttpClient client = new OkHttpClient();
+                    SharedPreferences pref = mContext.getSharedPreferences("mycookie",Context.MODE_PRIVATE);
+                    String sessionid = pref.getString("sessionid","");
                     //用post提交键值对格式的数据
                     Request request = new Request.Builder()
+                            .addHeader("cookie",sessionid)
                             .url(path)
                             .build();
                     Response response = client.newCall(request).execute();
@@ -130,17 +200,20 @@ public class OkHttp {
                         msg.what = GETOK;
                         msg.obj = responseData;
                         handler.sendMessage(msg);
+                        System.out.println("Connected");
                     } else {
                         //TODO 错误报告
                         Message msg = new Message();
                         msg.what = WRANG;
                         handler.sendMessage(msg);
+                        System.out.println("Not response");
                     }
                 } catch (IOException e) {
                     Message msg = new Message();
                     msg.what = EXCEPTION;
                     handler.sendMessage(msg);
                     e.printStackTrace();
+                    System.out.println("Error");
                 }
             }
         }).start();

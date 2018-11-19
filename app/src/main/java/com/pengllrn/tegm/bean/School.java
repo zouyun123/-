@@ -14,7 +14,7 @@ public class School {
     private String totaldevice;
     private String usingdevice;
 
-    public School(String id, String schoolname, Double longitude, Double latitude,int rate,String totaldevice,String usingdevice) {
+    public School(String id, String schoolname, Double longitude, Double latitude) {
         this.schoolid = id;
         this.schoolname = schoolname;
         this.longitude = longitude;

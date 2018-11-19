@@ -2,6 +2,7 @@ package com.pengllrn.tegm.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.pengllrn.tegm.Aoao.LoginStatus;
 import com.pengllrn.tegm.bean.AlarmList;
 import com.pengllrn.tegm.bean.All;
 import com.pengllrn.tegm.bean.ApplyCenterBean;
@@ -72,6 +73,12 @@ public class ParseJson {
         return user;
     }
 
+    public LoginStatus Json2LoginStatus(String json) {
+        Gson gson = new Gson();
+        LoginStatus loginStatus = gson.fromJson(json,LoginStatus.class);
+        return loginStatus;
+    }
+
     public List<Statistics> Json2Statistics(String json){
         Gson gson = new Gson();
         List<Statistics> statistics = new ArrayList<>();
@@ -87,19 +94,20 @@ public class ParseJson {
     }
 
     public List<School> SchoolPoint(String json) {
-        List<School> listSchool=new ArrayList<School>();
+        List<School> listSchool = new ArrayList<School>();
         try {
-            JSONArray jsonArray=new JSONArray(json);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jObject=jsonArray.getJSONObject(i);
+            JSONObject jsonObject = new JSONObject(json);
+            JSONArray shoolListObject = jsonObject.getJSONArray("school_list");
+            for (int i = 0; i < shoolListObject.length(); i++) {
+                JSONObject jObject=shoolListObject.getJSONObject(i);
                 String id=jObject.getString("schoolid");
                 String schoolname=jObject.getString("schoolname");
                 Double longitude=jObject.getDouble("longitude");
                 Double latitude = jObject.getDouble("latitude");
-                int rate = jObject.getInt("rate");
+                /*int rate = jObject.getInt("rate");
                 String totaldevice = jObject.getString("totaldevice");
-                String usingdevice = jObject.getString("usingdevice");
-                listSchool.add(new School(id,schoolname,longitude,latitude,rate,totaldevice,usingdevice));
+                String usingdevice = jObject.getString("usingdevice");*/
+                listSchool.add(new School(id,schoolname,longitude,latitude));
             }
         } catch (Exception e) {
             e.printStackTrace();

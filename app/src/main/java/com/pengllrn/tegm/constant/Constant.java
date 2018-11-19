@@ -9,7 +9,7 @@ public class Constant {
     /**
      * 系统所使用到的URL
      **/
-    public static final String SERVER_URL = "http://192.168.1.82:9999/android/";//服务器所在站点以及端口号
+    public static final String SERVER_URL = "http://47.107.37.50:8000/";//服务器所在站点以及端口号
     /**
      * 用户登录活动网址
      **/
@@ -17,7 +17,7 @@ public class Constant {
     /**
      * 主界面，MainActivity,获取用户权限内的学校信息及设备的使用数量
      **/
-    public static final String URL_MAIN = SERVER_URL + "schoollist/";
+    public static final String URL_MAIN = SERVER_URL + "get_school_list/";
     /**
      * DamageApplyActivity,报废申请活动界面，用户填写好报废信息进行报废提交
      **/

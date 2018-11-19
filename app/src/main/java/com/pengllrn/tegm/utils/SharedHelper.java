@@ -26,7 +26,7 @@ public class SharedHelper {
     public void save(User user){
         SharedPreferences sp = mContext.getSharedPreferences("user",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString("userid",user.getUserid());
+        editor.putString("loginid",user.getLoginid());
         editor.putString("username",user.getUsername());
         editor.putBoolean("isOfficial",user.getIsOfficial());
         editor.putString("usertype",user.getUsertype());
@@ -40,11 +40,11 @@ public class SharedHelper {
         editor.apply();
     }
 
-    public void save(String userid,String username,String usertype,String school,
+    public void save(String loginid,String username,String usertype,String school,
         String email,String wechat,String qq){
         SharedPreferences sp = mContext.getSharedPreferences("user",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString("userid",userid);
+        editor.putString("loginid",loginid);
         editor.putString("username",username);
         editor.putString("usertype",usertype);
         editor.putString("school",school);

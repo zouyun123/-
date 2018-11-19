@@ -1,6 +1,8 @@
 package com.pengllrn.tegm.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -8,6 +10,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +33,11 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.pengllrn.tegm.Aoao.AddingUrl;
+import com.pengllrn.tegm.Aoao.LoginStatus;
+import com.pengllrn.tegm.Aoao.SchoolTest;
 import com.pengllrn.tegm.R;
 import com.pengllrn.tegm.bean.School;
 import com.pengllrn.tegm.constant.Constant;
@@ -39,6 +47,10 @@ import com.pengllrn.tegm.utils.ActivityCollector;
 import com.pengllrn.tegm.utils.FileCache;
 import com.pengllrn.tegm.utils.SharedHelper;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.FormBody;
@@ -78,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             // TODO Auto-generated method stub
             switch (msg.what) {
-                case 0x2017:
+                case 0x2020:
                     String responseData = (msg.obj).toString();
                     parseJson = new ParseJson();
                     listSchool = parseJson.SchoolPoint(responseData);
@@ -87,11 +99,17 @@ public class MainActivity extends AppCompatActivity {
                         school = listSchool.get(i);
                         avg_latitude += school.getLatitude();
                         avg_longitude += school.getLongitude();
-                        drawmarker(school.getId(), new LatLng(school.getLatitude(), school.getLongitude()), school.getRate());
+                        drawmarker(school.getId(), new LatLng(school.getLatitude(), school.getLongitude()), 50);
+                        System.out.println(school.getId());
+                        System.out.println(school.getLatitude());
+                        System.out.println(school.getLongitude());
+                        System.out.println(school.getSchoolname());
                     }
                     if (listSchool.size() > 0) {
                         save(responseData, "schoolList");
                     }
+
+                    /*parseJsonWithGSON (responseData);*/
                     avg_latitude = avg_latitude / listSchool.size();
                     avg_longitude = avg_longitude / listSchool.size();
                     LatLng latLng = new LatLng(avg_latitude, avg_longitude);
@@ -200,10 +218,18 @@ public class MainActivity extends AppCompatActivity {
             });
         }
         if (isFirstSearch) {
+            String schoollistUrl;
             OkHttp okHttp = new OkHttp(getApplicationContext(), mHandler);
+            LoginStatus loginStatus = new LoginStatus();
+            HashMap<String,String> hashMap = new HashMap<>();
             if(isOfficial) school = "1";
-            RequestBody requestBody = new FormBody.Builder().add("school", school).add("userid", userid).build();
-            okHttp.postDataFromInternet(applyUrl, requestBody);
+            /*RequestBody requestBody = new FormBody.Builder().add("school", school).add("userid", userid).build();*/
+            /*okHttp.postDataFromInternet("http://47.107.37.50:8000/get_school_list/", requestBody);*/
+            SharedPreferences pref = getSharedPreferences("saveduser", MODE_PRIVATE);
+            hashMap = AddingUrl.createHashMap1("loginid",pref.getString("loginid",""));
+            schoollistUrl = AddingUrl.getUrl(applyUrl,hashMap);
+            okHttp.getDataFromInternet(schoollistUrl);
+            System.out.println("Url is " + schoollistUrl);
         }
         mapView.onResume();
         requestLocation();//开始定位
@@ -292,5 +318,17 @@ public class MainActivity extends AppCompatActivity {
         FileCache fileCache = new FileCache(getApplicationContext());
         fileCache.saveInCacheDir(data, filename);
     }
+
+    /*private void parseJsonWithGSON (String jsonData) {
+        Gson gson = new Gson();
+        List<SchoolTest> schoolTests = gson.fromJson(jsonData,new TypeToken<List<SchoolTest>>(){}.getType());
+        for (SchoolTest schoolTest : schoolTests) {
+            System.out.println(schoolTest.getSchoolName());
+            System.out.println(schoolTest.getSchoolId());
+            System.out.println("Lat is : " + schoolTest.getLat());
+            System.out.println("Lng is : " + schoolTest.getLng());
+            drawmarker(schoolTest.getSchoolId(),new LatLng(schoolTest.getLat(),schoolTest.getLng()),20);
+        }
+    }*/
 
 }

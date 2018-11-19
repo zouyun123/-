@@ -47,9 +47,9 @@ public class SearchActivity extends AppCompatActivity {
                 case 0x2017:
                     String responseData = (msg.obj).toString();
                     final List<Device> listDevice = mParseJson.JsonToAll(responseData).getDevice();
-                    if(listDevice!=null){
-                        search_list.setAdapter(new DeviceAdapter(getApplicationContext(),listDevice,
-                                R.layout.item_layout));
+                    if(listDevice != null){
+//                        search_list.setAdapter(new DeviceAdapter(getApplicationContext(),listDevice,
+//                                R.layout.item_layout));
                         search_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -103,7 +103,7 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
-        cancle.setOnClickListener(new View.OnClickListener() {
+        cancle.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
