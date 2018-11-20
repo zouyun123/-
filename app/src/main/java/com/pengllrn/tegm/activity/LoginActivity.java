@@ -56,13 +56,13 @@ public class LoginActivity extends AppCompatActivity {
                     System.out.println(Msg);
                     if (statusValues == 0) {
 //                        User user = mParseJson.Json2User(responseData);
-//                        sharedHelper = new SharedHelper(getApplicationContext());
-//                        sharedHelper.save(user);
+                        sharedHelper = new SharedHelper(getApplicationContext());
+                        sharedHelper.save(loginStatus);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         Toast.makeText(getApplicationContext(), "欢迎您，" + loginStatus.getUsername(), Toast.LENGTH_SHORT).show();
-//                        user_id.setText("");
-//                        passward.setText("");
+                        user_id.setText("");
+                        passward.setText("");
                     } else {
                         Toast.makeText(getApplicationContext(), "账号或密码错误", Toast.LENGTH_SHORT).show();
                     }
@@ -76,7 +76,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedHelper sharedHelper = new SharedHelper(this);
-        if (!sharedHelper.readbykey("status").equals("")) {
+        int statusValue = sharedHelper.readbyKey("status");
+        if (statusValue == 0) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
         }

@@ -5,10 +5,10 @@
             android:id="@+id/nav_look_device"
             android:icon="@mipmap/ic_visibility_grey"
             android:title="设备查看"/>
-        <item
-            android:id="@+id/nav_search_device"
-            android:icon="@mipmap/ic_search_grey"
-            android:title="设备查询"/>
+        <!--<item-->
+            <!--android:id="@+id/nav_search_device"-->
+            <!--android:icon="@mipmap/ic_search_grey"-->
+            <!--android:title="设备查询"/>-->
         <item
             android:id="@+id/nav_damage_center"
             android:icon="@mipmap/ic_damage_apply"

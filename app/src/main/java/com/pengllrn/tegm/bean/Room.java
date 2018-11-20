@@ -11,10 +11,12 @@ package com.pengllrn.tegm.bean;
 public class Room {
     private String buildingname = "";
     private String roomname = "";
+    private String roomid;
 
-    public Room(String buildingname, String roomname) {
+    public Room(String buildingname, String roomname,String roomid) {
         this.buildingname = buildingname;
         this.roomname = roomname;
+        this.roomid = roomid;
     }
 
     public String getBuildingname() {
@@ -23,5 +25,9 @@ public class Room {
 
     public String getRoomname() {
         return roomname;
+    }
+
+    public String getRoomid() {
+        return roomid;
     }
 }

@@ -3,6 +3,7 @@ package com.pengllrn.tegm.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.pengllrn.tegm.Aoao.LoginStatus;
 import com.pengllrn.tegm.bean.User;
 
 /**
@@ -40,6 +41,15 @@ public class SharedHelper {
         editor.apply();
     }
 
+    public void save(LoginStatus loginStatus) {
+        SharedPreferences sp = mContext.getSharedPreferences("loginstatus",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt("status",loginStatus.getStatus());
+        editor.putInt("usertype",loginStatus.getUsertype());
+        editor.putString("username",loginStatus.getUsername());
+        editor.apply();
+    }
+
     public void save(String loginid,String username,String usertype,String school,
         String email,String wechat,String qq){
         SharedPreferences sp = mContext.getSharedPreferences("user",Context.MODE_PRIVATE);
@@ -60,8 +70,18 @@ public class SharedHelper {
         return sp.getString(key,"");
     }
 
+    public int readbyKey(String key){
+        SharedPreferences sp = mContext.getSharedPreferences("loginstatus",Context.MODE_PRIVATE);
+        return sp.getInt(key,100);
+    }
+
+    public String readByKey(String key){
+        SharedPreferences sp = mContext.getSharedPreferences("loginstatus",Context.MODE_PRIVATE);
+        return sp.getString(key,"");
+    }
+
     public void clear(){
-        SharedPreferences sp = mContext.getSharedPreferences("user",Context.MODE_PRIVATE);
+        SharedPreferences sp = mContext.getSharedPreferences("loginstatus",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.clear();
         editor.commit();

@@ -1,6 +1,5 @@
 package com.pengllrn.tegm.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,11 +31,8 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.pengllrn.tegm.Aoao.AddingUrl;
 import com.pengllrn.tegm.Aoao.LoginStatus;
-import com.pengllrn.tegm.Aoao.SchoolTest;
 import com.pengllrn.tegm.R;
 import com.pengllrn.tegm.bean.School;
 import com.pengllrn.tegm.constant.Constant;
@@ -47,14 +42,8 @@ import com.pengllrn.tegm.utils.ActivityCollector;
 import com.pengllrn.tegm.utils.FileCache;
 import com.pengllrn.tegm.utils.SharedHelper;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.List;
-
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -66,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout lv_exit;
 
     private String applyUrl = Constant.URL_MAIN;
+    private String logoutUrl = Constant.URL_LOGOUT;
 
     public LocationClient mLocationClient;
     private BaiduMap baiduMap;
@@ -109,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
                         save(responseData, "schoolList");
                     }
 
-                    /*parseJsonWithGSON (responseData);*/
                     avg_latitude = avg_latitude / listSchool.size();
                     avg_longitude = avg_longitude / listSchool.size();
                     LatLng latLng = new LatLng(avg_latitude, avg_longitude);
@@ -163,14 +152,17 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, LookDevice.class);
                             startActivity(intent);
                             break;
-                        case R.id.nav_search_device:
-                            if (sharedHelper.readOfficial()) {
-                                Toast.makeText(getApplicationContext(), "您没有权限查询", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Intent intent1 = new Intent(MainActivity.this, SearchActivity.class);
-                                startActivity(intent1);
-                            }
-                            break;
+                        /*
+                        * 功能已經廢除
+                        */
+//                        case R.id.nav_search_device:
+//                            if (sharedHelper.readOfficial()) {
+//                                Toast.makeText(getApplicationContext(), "您没有权限查询", Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                Intent intent1 = new Intent(MainActivity.this, SearchActivity.class);
+//                                startActivity(intent1);
+//                            }
+//                            break;
                         case R.id.nav_damage_center:
                             Intent intent2 = new Intent(MainActivity.this, ApplyCenter.class);
                             startActivity(intent2);
@@ -201,6 +193,8 @@ public class MainActivity extends AppCompatActivity {
             lv_exit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    OkHttp okHttp = new OkHttp(getApplicationContext(), mHandler);
+                    okHttp.getDataFromInternet(logoutUrl);
                     sharedHelper.clear();
                     finish();
                 }
@@ -221,15 +215,14 @@ public class MainActivity extends AppCompatActivity {
             String schoollistUrl;
             OkHttp okHttp = new OkHttp(getApplicationContext(), mHandler);
             LoginStatus loginStatus = new LoginStatus();
-            HashMap<String,String> hashMap = new HashMap<>();
-            if(isOfficial) school = "1";
-            /*RequestBody requestBody = new FormBody.Builder().add("school", school).add("userid", userid).build();*/
-            /*okHttp.postDataFromInternet("http://47.107.37.50:8000/get_school_list/", requestBody);*/
+            HashMap<String,String> hashMap;
+//            if(isOfficial) school = "1";
+//            RequestBody requestBody = new FormBody.Builder().add("school", school).add("userid", userid).build();
+//            okHttp.postDataFromInternet("http://47.107.37.50:8000/get_school_list/", requestBody);
             SharedPreferences pref = getSharedPreferences("saveduser", MODE_PRIVATE);
             hashMap = AddingUrl.createHashMap1("loginid",pref.getString("loginid",""));
             schoollistUrl = AddingUrl.getUrl(applyUrl,hashMap);
             okHttp.getDataFromInternet(schoollistUrl);
-            System.out.println("Url is " + schoollistUrl);
         }
         mapView.onResume();
         requestLocation();//开始定位
@@ -318,17 +311,5 @@ public class MainActivity extends AppCompatActivity {
         FileCache fileCache = new FileCache(getApplicationContext());
         fileCache.saveInCacheDir(data, filename);
     }
-
-    /*private void parseJsonWithGSON (String jsonData) {
-        Gson gson = new Gson();
-        List<SchoolTest> schoolTests = gson.fromJson(jsonData,new TypeToken<List<SchoolTest>>(){}.getType());
-        for (SchoolTest schoolTest : schoolTests) {
-            System.out.println(schoolTest.getSchoolName());
-            System.out.println(schoolTest.getSchoolId());
-            System.out.println("Lat is : " + schoolTest.getLat());
-            System.out.println("Lng is : " + schoolTest.getLng());
-            drawmarker(schoolTest.getSchoolId(),new LatLng(schoolTest.getLat(),schoolTest.getLng()),20);
-        }
-    }*/
 
 }

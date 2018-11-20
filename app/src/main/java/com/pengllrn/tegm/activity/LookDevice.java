@@ -39,7 +39,7 @@ public class LookDevice extends AppCompatActivity {
         if(schoolid != null && !schoolid.equals("") ){//是什么？
             Bundle bundle = new Bundle();
             bundle.putString("schoolid",schoolid);
-            BuildingListFg buildingListFg=new BuildingListFg();
+            BuildingListFg buildingListFg = new BuildingListFg();
             buildingListFg.setArguments(bundle);
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();

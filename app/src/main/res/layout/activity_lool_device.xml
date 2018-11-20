@@ -29,6 +29,7 @@
             android:gravity="center_vertical"
             android:background="@color/white_255">
             <TextView
+                android:id="@+id/text1"
                 android:layout_width="0dp"
                 android:layout_weight="7"
                 android:layout_height="wrap_content"
@@ -41,6 +42,7 @@
                 android:layout_margin="8dp"
                 android:background="@color/divider_line"/>
             <TextView
+                android:id="@+id/text2"
                 android:layout_width="0dp"
                 android:layout_weight="5"
                 android:layout_height="wrap_content"
@@ -53,6 +55,7 @@
                 android:layout_margin="8dp"
                 android:background="@color/divider_line"/>
             <TextView
+                android:id="@+id/text3"
                 android:layout_width="0dp"
                 android:layout_weight="5"
                 android:layout_height="wrap_content"
@@ -66,6 +69,7 @@
                 android:layout_margin="8dp"
                 android:background="@color/divider_line"/>
             <TextView
+                android:id="@+id/text4"
                 android:layout_width="0dp"
                 android:layout_weight="4"
                 android:layout_height="wrap_content"

@@ -1,5 +1,8 @@
 package com.pengllrn.tegm.activity;
 
+/*
+功能已經廢除
+*/
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
