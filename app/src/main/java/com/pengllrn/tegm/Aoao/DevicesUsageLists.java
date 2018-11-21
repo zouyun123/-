@@ -20,6 +20,7 @@ public class DevicesUsageLists {
         this.rate = rate;
     }
 
+
     public String getSchoolid() {
         return schoolid;
     }

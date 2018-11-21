@@ -39,6 +39,10 @@ public class Constant {
    * 獲取教室中設備
    */
     public static final String URL_DEVICES_IN_ROOM = SERVER_URL + "get_devices_in_room/";
+    /*
+    * 獲取設備報廢處理列表
+    */
+    public static final String URL_DAMAGE_APPLICATION = SERVER_URL + "get_property_damage_list/";
     /**
      * DamageApplyActivity,报废申请活动界面，用户填写好报废信息进行报废提交
      **/

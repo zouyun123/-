@@ -30,7 +30,7 @@ import okhttp3.RequestBody;
 
 public class My_ApplyFg extends Fragment {
 
-    private String applyUrl = Constant.URL_APPLY_LIST;
+    private String applyUrl = Constant.URL_DAMAGE_APPLICATION;
     private ApplyCenter applyCenter;
     private ListView my_apply_list;
     private ParseJson parseJson = new ParseJson();

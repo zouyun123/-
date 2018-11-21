@@ -3,6 +3,7 @@ package com.pengllrn.tegm.gson;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pengllrn.tegm.Aoao.BuildingLists;
+import com.pengllrn.tegm.Aoao.DamageApplicationLists;
 import com.pengllrn.tegm.Aoao.DevicesInRoom;
 import com.pengllrn.tegm.Aoao.DevicesUsageLists;
 import com.pengllrn.tegm.Aoao.LoginStatus;
@@ -138,29 +139,6 @@ public class ParseJson {
         return listBuilding;
     }
 
-    public List<DevicesUsageLists> DevicesUsagePoint(String json) {
-        List<DevicesUsageLists> listDevicesUsage = new ArrayList<DevicesUsageLists>();
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            JSONObject devicesUsageObject = jsonObject.getJSONObject("device_usage");
-
-            String schoolid = devicesUsageObject.getString("schoolid");
-            String schoolname = devicesUsageObject.getString("schoolname");
-            int total_device = devicesUsageObject.getInt("total_device");
-            int using_device = devicesUsageObject.getInt("using_device");
-            int rate = 0;
-            if (total_device != 0) {
-                    double Rate = new BigDecimal((float)using_device/total_device).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    rate = (int) Rate * 100;
-            }
-            listDevicesUsage.add(new DevicesUsageLists(schoolid,schoolname,total_device,using_device,rate));
-
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        return listDevicesUsage;
-    }
-
     public List<Room> RoomListsPoint(String json) {
         List<Room> listRoom = new ArrayList<Room>();
         try {
@@ -201,6 +179,28 @@ public class ParseJson {
             e.printStackTrace();
         }
         return listDeviceInRoom;
+    }
+
+    public List<DamageApplicationLists> DamageApplicationListsPoint(String json) {
+        List<DamageApplicationLists> listDamageApplication = new ArrayList<DamageApplicationLists>();
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONArray damageapplicationArray = jsonObject.getJSONArray("application_list");
+            for (int i = 0;i < damageapplicationArray.length();i++) {
+                JSONObject jObject = damageapplicationArray.getJSONObject(i);
+                int deal_status = jObject.getInt("deal_status");
+                String name = jObject.getString("name");
+                int applicationid = jObject.getInt("applicationid");
+                String datetime = jObject.getString("datetime");
+                String deviceid = jObject.getString("deviceid");
+                String type = jObject.getString("type");
+                String devicenum = jObject.getString("devicenum");
+                listDamageApplication.add(new DamageApplicationLists(deal_status,name,applicationid,datetime,deviceid,type,devicenum));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listDamageApplication;
     }
 
     public List<ApplyCenterBean> ApplyList(String json){

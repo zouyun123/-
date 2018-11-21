@@ -25,11 +25,19 @@ import com.pengllrn.tegm.constant.Constant;
 import com.pengllrn.tegm.gson.ParseJson;
 import com.pengllrn.tegm.internet.OkHttp;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * @author Administrator
@@ -45,6 +53,12 @@ public class SchoolListFg extends Fragment {
     private ListView list_gis;
 
     private ParseJson mParseJson = new ParseJson();
+    private List<DevicesUsageLists> listDevicesUsage = new ArrayList<DevicesUsageLists>();
+    private List<School> listSchool = new ArrayList<School>();
+
+    public final int GETOK = 0x2020;
+    public final int WRANG = 0x22;
+    public final int EXCEPTION = 0x30;
 
     Handler mHandler = new Handler() {
         @Override
@@ -52,14 +66,12 @@ public class SchoolListFg extends Fragment {
             // TODO Auto-generated method stub
             switch (msg.what) {
                 case 0x2020:
-                    String responseData = (msg.obj).toString();
 //                    List<School> listSchool = mParseJson.Json2Gis(responseData).getSchoolLists();
 //                    if(listSchool!=null) {
 //                        list_gis.setAdapter(new SchoolListAdapter(lookDeviceActivity,
 //                                listSchool, R.layout.base_list_item));
 //                        setListListener(listSchool);
 //                    }
-                    List<DevicesUsageLists> listDevicesUsage = mParseJson.DevicesUsagePoint(responseData);
                     if (listDevicesUsage != null) {
                         list_gis.setAdapter(new DevicesUsageListsAdapter(lookDeviceActivity,listDevicesUsage,R.layout.base_list_item));
                         setListListener(listDevicesUsage);
@@ -95,7 +107,7 @@ public class SchoolListFg extends Fragment {
         list_gis = (ListView) view.findViewById(R.id.list_gis);
         String data = lookDeviceActivity.read("schoolList");
         if (data != null && !data.equals("")) {
-            List<School> listSchool = mParseJson.SchoolPoint(data);
+            listSchool = mParseJson.SchoolPoint(data);
             HashMap<String,String> hashMap;
             String devicesusageUrl;
 //            if(listSchool!=null) {
@@ -111,10 +123,10 @@ public class SchoolListFg extends Fragment {
            if (listSchool != null) {
                for (int i = 0;i < listSchool.size();i++) {
                    String schoolid = listSchool.get(i).getId();
-                   OkHttp okHttp = new OkHttp(lookDeviceActivity, mHandler);
                    hashMap = AddingUrl.createHashMap1("schoolid",schoolid);
                    devicesusageUrl = AddingUrl.getUrl(applyUrl,hashMap);
-                   okHttp.getDataFromInternet(devicesusageUrl);
+                   getDataFromInternet(devicesusageUrl);
+                   System.out.println("devicesusageUrl is " + devicesusageUrl);
                }
            }
 
@@ -154,5 +166,76 @@ public class SchoolListFg extends Fragment {
                 transaction.commit();
             }
         });
+    }
+
+    public void getDataFromInternet(final String path) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    SharedPreferences pref = lookDeviceActivity.getSharedPreferences("mycookie",Context.MODE_PRIVATE);
+                    String sessionid = pref.getString("sessionid","");
+                    //用post提交键值对格式的数据
+                    Request request = new Request.Builder()
+                            .addHeader("cookie",sessionid)
+                            .url(path)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String responseData = response.body().string();
+                    listDevicesUsage = DevicesUsagePoint(responseData);
+                    System.out.println("listDevicesUsage: " + listDevicesUsage);
+                    System.out.println("reponsedata is " + responseData);
+                    System.out.println("There are " + listSchool.size() + " school");
+                    System.out.println("There are " + listDevicesUsage.size() + " devicelists");
+
+                    if (response.isSuccessful() && listDevicesUsage.size() == listSchool.size()) {
+                        Message msg = new Message();
+                        msg.what = GETOK;
+                        msg.obj = responseData;
+                        mHandler.sendMessage(msg);
+                        System.out.println("Connected");
+                    } else {
+                        //TODO 错误报告
+                        Message msg = new Message();
+                        msg.what = WRANG;
+                        mHandler.sendMessage(msg);
+                        System.out.println("Not response");
+                    }
+                } catch (IOException e) {
+                    Message msg = new Message();
+                    msg.what = EXCEPTION;
+                    mHandler.sendMessage(msg);
+                    e.printStackTrace();
+                    System.out.println("Error");
+                }
+            }
+        }).start();
+    }
+
+    public List<DevicesUsageLists> DevicesUsagePoint(String json) {
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject devicesUsageObject = jsonObject.getJSONObject("device_usage");
+
+            String schoolid = devicesUsageObject.getString("schoolid");
+            String schoolname = devicesUsageObject.getString("schoolname");
+            int total_device = devicesUsageObject.getInt("total_device");
+            int using_device = devicesUsageObject.getInt("using_device");
+            int rate;
+            if (total_device != 0) {
+                double Rate = new BigDecimal((float)using_device/total_device).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                rate = (int) (Rate * 100);
+                System.out.println("Rate is: " + Rate);
+                System.out.println("usingdevice is " + using_device);
+                System.out.println("totaldevice is " + total_device);
+            } else {
+                rate = 0;
+            }
+            listDevicesUsage.add(new DevicesUsageLists(schoolid,schoolname,total_device,using_device,rate));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listDevicesUsage;
     }
 }
