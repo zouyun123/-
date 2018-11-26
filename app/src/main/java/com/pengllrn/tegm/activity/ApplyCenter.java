@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.pengllrn.tegm.R;
 import com.pengllrn.tegm.fragment.My_ApplyFg;
 import com.pengllrn.tegm.fragment.Other_ApplyFg;
+import com.pengllrn.tegm.utils.FileCache;
 import com.pengllrn.tegm.utils.SharedHelper;
 
 public class ApplyCenter extends AppCompatActivity {
@@ -109,5 +110,10 @@ public class ApplyCenter extends AppCompatActivity {
         lv_other_apply.setBackgroundResource(R.mipmap.orange_line);
         tv_my_apply.setTextColor(Color.parseColor("#787878"));
         lv_my_apply.setBackground(null);
+    }
+
+    public String read(String filename){
+        FileCache fileCache = new FileCache(getApplication());
+        return fileCache.readFromCacheDir(filename);
     }
 }

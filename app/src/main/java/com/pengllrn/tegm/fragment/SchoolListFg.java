@@ -54,11 +54,7 @@ public class SchoolListFg extends Fragment {
 
     private ParseJson mParseJson = new ParseJson();
     private List<DevicesUsageLists> listDevicesUsage = new ArrayList<DevicesUsageLists>();
-    private List<School> listSchool = new ArrayList<School>();
-
-    public final int GETOK = 0x2020;
-    public final int WRANG = 0x22;
-    public final int EXCEPTION = 0x30;
+    private List<School> listSchool;
 
     Handler mHandler = new Handler() {
         @Override
@@ -66,12 +62,14 @@ public class SchoolListFg extends Fragment {
             // TODO Auto-generated method stub
             switch (msg.what) {
                 case 0x2020:
+                    String responseData = (msg.obj).toString();
 //                    List<School> listSchool = mParseJson.Json2Gis(responseData).getSchoolLists();
 //                    if(listSchool!=null) {
 //                        list_gis.setAdapter(new SchoolListAdapter(lookDeviceActivity,
 //                                listSchool, R.layout.base_list_item));
 //                        setListListener(listSchool);
 //                    }
+                    listDevicesUsage = DevicesUsagePoint(responseData);
                     if (listDevicesUsage != null) {
                         list_gis.setAdapter(new DevicesUsageListsAdapter(lookDeviceActivity,listDevicesUsage,R.layout.base_list_item));
                         setListListener(listDevicesUsage);
@@ -124,8 +122,9 @@ public class SchoolListFg extends Fragment {
                for (int i = 0;i < listSchool.size();i++) {
                    String schoolid = listSchool.get(i).getId();
                    hashMap = AddingUrl.createHashMap1("schoolid",schoolid);
+                   OkHttp okHttp = new OkHttp(lookDeviceActivity, mHandler);
                    devicesusageUrl = AddingUrl.getUrl(applyUrl,hashMap);
-                   getDataFromInternet(devicesusageUrl);
+                   okHttp.getDataFromInternet(devicesusageUrl);
                    System.out.println("devicesusageUrl is " + devicesusageUrl);
                }
            }
@@ -166,51 +165,6 @@ public class SchoolListFg extends Fragment {
                 transaction.commit();
             }
         });
-    }
-
-    public void getDataFromInternet(final String path) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    OkHttpClient client = new OkHttpClient();
-                    SharedPreferences pref = lookDeviceActivity.getSharedPreferences("mycookie",Context.MODE_PRIVATE);
-                    String sessionid = pref.getString("sessionid","");
-                    //用post提交键值对格式的数据
-                    Request request = new Request.Builder()
-                            .addHeader("cookie",sessionid)
-                            .url(path)
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    String responseData = response.body().string();
-                    listDevicesUsage = DevicesUsagePoint(responseData);
-                    System.out.println("listDevicesUsage: " + listDevicesUsage);
-                    System.out.println("reponsedata is " + responseData);
-                    System.out.println("There are " + listSchool.size() + " school");
-                    System.out.println("There are " + listDevicesUsage.size() + " devicelists");
-
-                    if (response.isSuccessful() && listDevicesUsage.size() == listSchool.size()) {
-                        Message msg = new Message();
-                        msg.what = GETOK;
-                        msg.obj = responseData;
-                        mHandler.sendMessage(msg);
-                        System.out.println("Connected");
-                    } else {
-                        //TODO 错误报告
-                        Message msg = new Message();
-                        msg.what = WRANG;
-                        mHandler.sendMessage(msg);
-                        System.out.println("Not response");
-                    }
-                } catch (IOException e) {
-                    Message msg = new Message();
-                    msg.what = EXCEPTION;
-                    mHandler.sendMessage(msg);
-                    e.printStackTrace();
-                    System.out.println("Error");
-                }
-            }
-        }).start();
     }
 
     public List<DevicesUsageLists> DevicesUsagePoint(String json) {

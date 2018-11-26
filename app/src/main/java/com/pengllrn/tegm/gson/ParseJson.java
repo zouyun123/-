@@ -180,7 +180,6 @@ public class ParseJson {
         }
         return listDeviceInRoom;
     }
-
     public List<DamageApplicationLists> DamageApplicationListsPoint(String json) {
         List<DamageApplicationLists> listDamageApplication = new ArrayList<DamageApplicationLists>();
         try {
@@ -202,7 +201,6 @@ public class ParseJson {
         }
         return listDamageApplication;
     }
-
     public List<ApplyCenterBean> ApplyList(String json){
         List<ApplyCenterBean> listApply = new ArrayList<>();
         try {
