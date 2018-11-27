@@ -3,6 +3,7 @@ package com.pengllrn.tegm.gson;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pengllrn.tegm.Aoao.BuildingLists;
+import com.pengllrn.tegm.Aoao.DamageApplicationDetailLists;
 import com.pengllrn.tegm.Aoao.DamageApplicationLists;
 import com.pengllrn.tegm.Aoao.DevicesInRoom;
 import com.pengllrn.tegm.Aoao.DevicesUsageLists;
@@ -27,7 +28,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class ParseJson {
+
+    private List<DevicesUsageLists> listDevicesUsage = new ArrayList<DevicesUsageLists>();
+    private List<DamageApplicationLists> listDamageApplication = new ArrayList<DamageApplicationLists>();
+    private List<DamageApplicationDetailLists> listDamageApplicationDetail = new ArrayList<DamageApplicationDetailLists>();
+
     public List<Device> JsonToDevice(String json) {
         Gson gson = new Gson();
         All all = gson.fromJson(json, All.class);
@@ -180,8 +188,34 @@ public class ParseJson {
         }
         return listDeviceInRoom;
     }
+
+    public List<DevicesUsageLists> DevicesUsagePoint(String json) {
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject devicesUsageObject = jsonObject.getJSONObject("device_usage");
+
+            String schoolid = devicesUsageObject.getString("schoolid");
+            String schoolname = devicesUsageObject.getString("schoolname");
+            int total_device = devicesUsageObject.getInt("total_device");
+            int using_device = devicesUsageObject.getInt("using_device");
+            int rate;
+            if (total_device != 0) {
+                double Rate = new BigDecimal((float)using_device/total_device).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                rate = (int) (Rate * 100);
+                System.out.println("Rate is: " + Rate);
+                System.out.println("usingdevice is " + using_device);
+                System.out.println("totaldevice is " + total_device);
+            } else {
+                rate = 0;
+            }
+            listDevicesUsage.add(new DevicesUsageLists(schoolid,schoolname,total_device,using_device,rate));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listDevicesUsage;
+    }
+
     public List<DamageApplicationLists> DamageApplicationListsPoint(String json) {
-        List<DamageApplicationLists> listDamageApplication = new ArrayList<DamageApplicationLists>();
         try {
             JSONObject jsonObject = new JSONObject(json);
             JSONArray damageapplicationArray = jsonObject.getJSONArray("application_list");
@@ -201,6 +235,26 @@ public class ParseJson {
         }
         return listDamageApplication;
     }
+
+    public List<DamageApplicationDetailLists> DamageApplicationDetailPoint(String json) {
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject damageapplicationdetailobject = jsonObject.getJSONObject("application_detail");
+            String appliertel = damageapplicationdetailobject.getString("appliertel");
+            String datetime = damageapplicationdetailobject.getString("datetime");
+            String devicenum = damageapplicationdetailobject.getString("devicenum");
+            String schoolid = damageapplicationdetailobject.getString("schoolid");
+            String damagedepict = damageapplicationdetailobject.getString("damagedepict");
+            String deviceid = damageapplicationdetailobject.getString("deviceid");
+            String applier = damageapplicationdetailobject.getString("applier");
+            String type = damageapplicationdetailobject.getString("type");
+            listDamageApplicationDetail.add(new DamageApplicationDetailLists(appliertel,datetime,devicenum,schoolid,damagedepict,deviceid,applier,type));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listDamageApplicationDetail;
+    }
+
     public List<ApplyCenterBean> ApplyList(String json){
         List<ApplyCenterBean> listApply = new ArrayList<>();
         try {

@@ -60,9 +60,10 @@ public class My_ApplyFg extends Fragment {
 //                    if (applyList.size() > 0) {
 //                        my_apply_list.setAdapter(new MyApplyListAdapter(applyCenter, applyList, R.layout.item_apply_list));
 //                    }
-                    listDamageApplication = DamageApplicationPoint(responseData);
+                    listDamageApplication = mParseJson.DamageApplicationListsPoint(responseData);
                     if (listDamageApplication != null) {
                         my_apply_list.setAdapter(new DamageApplicationListsAdapter(applyCenter,listDamageApplication,R.layout.item_apply_list));
+                        applyCenter.save(responseData,"applicationList");
                     }
                     break;
                 default:
@@ -118,30 +119,28 @@ public class My_ApplyFg extends Fragment {
                     System.out.println("devicesusageUrl is " + damageapplicationUrl);
                 }
             }
-
         }
     }
 
-    public List<DamageApplicationLists> DamageApplicationPoint(String json) {
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            JSONArray damageapplicationArray = jsonObject.getJSONArray("application_list");
-            for (int i = 0; i < damageapplicationArray.length(); i++) {
-                JSONObject jObject = damageapplicationArray.getJSONObject(i);
-                int deal_status = jObject.getInt("deal_status");
-                String name = jObject.getString("name");
-                int applicationid = jObject.getInt("applicationid");
-                String datetime = jObject.getString("datetime");
-                String deviceid = jObject.getString("deviceid");
-                String type = jObject.getString("type");
-                String devicenum = jObject.getString("devicenum");
-                listDamageApplication.add(new DamageApplicationLists(deal_status, name, applicationid, datetime, deviceid, type, devicenum));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return listDamageApplication;
-    }
+//    public List<DamageApplicationLists> DamageApplicationListsPoint(String json) {
+//        try {
+//            JSONObject jsonObject = new JSONObject(json);
+//            JSONArray damageapplicationArray = jsonObject.getJSONArray("application_list");
+//            for (int i = 0; i < damageapplicationArray.length(); i++) {
+//                JSONObject jObject = damageapplicationArray.getJSONObject(i);
+//                int deal_status = jObject.getInt("deal_status");
+//                String name = jObject.getString("name");
+//                int applicationid = jObject.getInt("applicationid");
+//                String datetime = jObject.getString("datetime");
+//                String deviceid = jObject.getString("deviceid");
+//                String type = jObject.getString("type");
+//                String devicenum = jObject.getString("devicenum");
+//                listDamageApplication.add(new DamageApplicationLists(deal_status, name, applicationid, datetime, deviceid, type, devicenum));
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return listDamageApplication;
+//    }
 }
 

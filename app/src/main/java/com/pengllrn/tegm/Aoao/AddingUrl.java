@@ -22,6 +22,12 @@ public class AddingUrl {
         return hashmap;
     }
 
+//    public static HashMap<String,Integer> createHashMap3(String key,int value) {
+//        HashMap hashMap = new HashMap();
+//        hashMap.put(key,value);
+//        return hashMap;
+//    }
+
     public static String getUrl(String actionUrl, HashMap<String, String> paramsMap) {
         StringBuilder myBuilder = new StringBuilder();
         String addedUrl = null;
@@ -44,4 +50,5 @@ public class AddingUrl {
         }
         return addedUrl;
     }
+
 }

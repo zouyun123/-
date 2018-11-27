@@ -28,6 +28,7 @@ import com.pengllrn.tegm.constant.Constant;
 import com.pengllrn.tegm.gson.ParseJson;
 import com.pengllrn.tegm.internet.OkHttp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -63,32 +64,39 @@ public class RoomListFg extends Fragment {
             // TODO Auto-generated method stub
             switch (msg.what) {
                 case 0x2020:
+                    System.out.println("Get roomlists");
                     String responseData = (msg.obj).toString();
 //                    final List<RoomList> listRoom = mParseJson.Json2Gis(responseData).getRoomLists();
                     final List<Room> listRoom = mParseJson.RoomListsPoint(responseData);
+                    final List<Room> actuallistRoom = new ArrayList<Room>();
                     if(listRoom != null) {
-                        list_gis.setAdapter(new RoomListsAdapter(loolDeviceActivity,
-                                listRoom, R.layout.base_list_item));
-                        list_gis.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                        for (int i = 0;i < listRoom.size();i++) {
+                            if (listRoom.get(i).getBuildingname().equals(buildingname)) {
+                                actuallistRoom.add(listRoom.get(i));
+                                list_gis.setAdapter(new RoomListsAdapter(loolDeviceActivity,
+                                        actuallistRoom, R.layout.base_list_item));
+                                list_gis.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 //                                Intent intent = new Intent(loolDeviceActivity, DeviceInRoom.class);
 //                                intent.putExtra("schoolid",schoolid);
 //                                intent.putExtra("roomname", listRoom.get(position).getRoomname());
 //                                intent.putExtra("buildingname",buildingname);
 //                                startActivity(intent);
-                                String roomid = listRoom.get(position).getRoomid();
-                                Bundle bundle = new Bundle();
-                                bundle.putString("roomid", roomid);
-                                DeviceInRoomFg deviceInRoomFg = new DeviceInRoomFg();
-                                deviceInRoomFg.setArguments(bundle);
-                                FragmentManager fragmentManager = loolDeviceActivity.getSupportFragmentManager();
-                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                                fragmentTransaction.replace(R.id.fragment_list, deviceInRoomFg);
-                                fragmentTransaction.addToBackStack(null);
-                                fragmentTransaction.commit();
+                                        String roomid = actuallistRoom.get(position).getRoomid();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("roomid", roomid);
+                                        DeviceInRoomFg deviceInRoomFg = new DeviceInRoomFg();
+                                        deviceInRoomFg.setArguments(bundle);
+                                        FragmentManager fragmentManager = loolDeviceActivity.getSupportFragmentManager();
+                                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                                        fragmentTransaction.replace(R.id.fragment_list, deviceInRoomFg);
+                                        fragmentTransaction.addToBackStack(null);
+                                        fragmentTransaction.commit();
+                                    }
+                                });
                             }
-                        });
+                        }
                     }
                     break;
                 default:
@@ -113,7 +121,6 @@ public class RoomListFg extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
-        LookDevice lookDevice=(LookDevice)getActivity();
         schoolid = getArguments().getString("schoolid");
         buildingname = getArguments().getString("buildingname");
         return view;

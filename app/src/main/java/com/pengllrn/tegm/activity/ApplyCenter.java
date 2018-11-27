@@ -69,17 +69,15 @@ public class ApplyCenter extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!flag){
-                    if(usertype.equals("3") || usertype.equals("4")){
-                        Toast.makeText(getApplicationContext(),"对不起，您没有操作权限！",Toast.LENGTH_SHORT).show();
-                    }else {
-                        setStateB();
-                        flag = true;
-                        //
-                        FragmentManager fragmentManager = getSupportFragmentManager();
-                        FragmentTransaction transaction = fragmentManager.beginTransaction();
-                        transaction.replace(R.id.apply_center_fg, new Other_ApplyFg());
-                        transaction.commit();
-                    }
+//                    if(usertype.equals("3") || usertype.equals("4")){
+//                        Toast.makeText(getApplicationContext(),"对不起，您没有操作权限！",Toast.LENGTH_SHORT).show();
+//                    }else {
+                    setStateB();
+                    flag = true;
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.replace(R.id.apply_center_fg, new Other_ApplyFg());
+                    transaction.commit();
                 }
             }
         });
@@ -110,6 +108,11 @@ public class ApplyCenter extends AppCompatActivity {
         lv_other_apply.setBackgroundResource(R.mipmap.orange_line);
         tv_my_apply.setTextColor(Color.parseColor("#787878"));
         lv_my_apply.setBackground(null);
+    }
+
+    public void save(String data, String filename) {
+        FileCache fileCache = new FileCache(getApplicationContext());
+        fileCache.saveInCacheDir(data, filename);
     }
 
     public String read(String filename){

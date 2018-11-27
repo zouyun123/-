@@ -58,6 +58,7 @@ public class BuildingListFg extends Fragment {
             // TODO Auto-generated method stub
             switch (msg.what) {
                 case 0x2020:
+                    System.out.println("Get Buildinglists");
                     String responseData = (msg.obj).toString();
 //                    final List<BuildingList> listBuilding = mParseJson.Json2Gis(responseData).getBuildingLists();
                     final List<BuildingLists> listBuilding = mParseJson.BuildingPoint(responseData);
@@ -75,7 +76,7 @@ public class BuildingListFg extends Fragment {
                                 roomListFg.setArguments(bundle);
                                 FragmentManager fragmentManager = loolDeviceActivity.getSupportFragmentManager();
                                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                                transaction.add(R.id.fragment_list, roomListFg);
+                                transaction.replace(R.id.fragment_list, roomListFg);
                                 transaction.addToBackStack(null);
                                 transaction.commit();
                             }
@@ -100,7 +101,6 @@ public class BuildingListFg extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -126,8 +126,6 @@ public class BuildingListFg extends Fragment {
 //                .add("schoolid",schoolid)
 //                .build();
 //        okHttp.postDataFromInternet(applyUrl, requestBody);
-
-
     }
 
     public void setTitle() {

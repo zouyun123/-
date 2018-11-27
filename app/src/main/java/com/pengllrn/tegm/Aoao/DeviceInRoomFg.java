@@ -45,6 +45,7 @@ public class DeviceInRoomFg extends Fragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0x2020:
+                    System.out.println("Get deviceusagelists");
                     String responseData = (msg.obj).toString();
                     final List<DevicesInRoom> listDeviceInRoom = mParseJson.DevicesInRoomPoint(responseData);
                     if (listDeviceInRoom != null) {
@@ -84,13 +85,13 @@ public class DeviceInRoomFg extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
+        setTitle();
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setTitle();
         String getdevicesinroomUrl;
         HashMap<String,String> hashMap;
         list_gis = (ListView) view.findViewById(R.id.list_gis);
