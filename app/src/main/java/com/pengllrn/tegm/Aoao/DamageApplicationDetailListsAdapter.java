@@ -12,17 +12,17 @@ import java.util.List;
  * Created by Aoao Bot on 2018/11/27.
  */
 
-public class DamageApplicationDetailListsAdapter extends ListViewAdapter<DamageApplicationDetailLists> {
+public class DamageApplicationDetailListsAdapter extends ListViewAdapter<DamageApplicationLists> {
 
-    public DamageApplicationDetailListsAdapter(Context context, List<DamageApplicationDetailLists> datas, int layoutId) {
+    public DamageApplicationDetailListsAdapter(Context context, List<DamageApplicationLists> datas, int layoutId) {
         super(context, datas, layoutId);
     }
 
     @Override
-    public void convert(ViewHolder holder, DamageApplicationDetailLists damageApplicationDetailLists) {
-        holder.setText(R.id.item1,damageApplicationDetailLists.getDeviceid());
-        holder.setText(R.id.item2,damageApplicationDetailLists.getDamagedepict());
-        holder.setText(R.id.item3,damageApplicationDetailLists.getApplier());
-        holder.setText(R.id.item4,String.valueOf(damageApplicationDetailLists.getAppliertel()));
+    public void convert(ViewHolder holder, DamageApplicationLists damageApplicationLists) {
+        holder.setText(R.id.item1,damageApplicationLists.getDeviceid());
+        holder.setText(R.id.item2,damageApplicationLists.getName());
+//        holder.setText(R.id.item3,"--");
+//        holder.setText(R.id.item4,"--");
     }
 }

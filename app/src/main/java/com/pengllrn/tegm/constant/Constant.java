@@ -47,6 +47,10 @@ public class Constant {
     * 獲取設備詳細報廢申請列表
     */
     public static final String URL_DAMAGE_APPLICATION_DETAIL = SERVER_URL + "get_property_damage_detail/";
+    /*
+    * 設備報廢處理
+    */
+    public static final String URL_APPLICATION_CHECK = SERVER_URL + "property_application_check/";
     /**
      * DamageApplyActivity,报废申请活动界面，用户填写好报废信息进行报废提交
      **/

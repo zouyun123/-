@@ -2,6 +2,7 @@ package com.pengllrn.tegm.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.pengllrn.tegm.Aoao.ApplicationCheckStatus;
 import com.pengllrn.tegm.Aoao.BuildingLists;
 import com.pengllrn.tegm.Aoao.DamageApplicationDetailLists;
 import com.pengllrn.tegm.Aoao.DamageApplicationLists;
@@ -91,6 +92,12 @@ public class ParseJson {
         Gson gson = new Gson();
         LoginStatus loginStatus = gson.fromJson(json,LoginStatus.class);
         return loginStatus;
+    }
+
+    public ApplicationCheckStatus Json2ApplicationCheckStatus(String json) {
+        Gson gson = new Gson();
+        ApplicationCheckStatus applicationCheckStatus = gson.fromJson(json,ApplicationCheckStatus.class);
+        return applicationCheckStatus;
     }
 
     public List<Statistics> Json2Statistics(String json){
@@ -248,7 +255,15 @@ public class ParseJson {
             String deviceid = damageapplicationdetailobject.getString("deviceid");
             String applier = damageapplicationdetailobject.getString("applier");
             String type = damageapplicationdetailobject.getString("type");
-            listDamageApplicationDetail.add(new DamageApplicationDetailLists(appliertel,datetime,devicenum,schoolid,damagedepict,deviceid,applier,type));
+            String photo1 = damageapplicationdetailobject.getString("photo1");
+            String photo2 = damageapplicationdetailobject.getString("photo2");
+            String photo3 = damageapplicationdetailobject.getString("photo3");
+            String photo4 = damageapplicationdetailobject.getString("photo4");
+            String photo5 = damageapplicationdetailobject.getString("photo5");
+            String photo6 = damageapplicationdetailobject.getString("photo6");
+            listDamageApplicationDetail.add(new DamageApplicationDetailLists(appliertel,datetime,
+                    devicenum,schoolid,damagedepict,deviceid,applier,type,photo1,photo2,photo3,
+                    photo4,photo5,photo6));
         } catch (Exception e) {
             e.printStackTrace();
         }

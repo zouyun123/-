@@ -8,8 +8,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -153,8 +156,10 @@ public class OkHttp {
                 try {
                     OkHttpClient client = new OkHttpClient();
                     //用post提交键值对格式的数据
-
+                    SharedPreferences pref = mContext.getSharedPreferences("mycookie",Context.MODE_PRIVATE);
+                    String sessionid = pref.getString("sessionid","");
                     Request request = new Request.Builder()
+                            .addHeader("cookie",sessionid)
                             .url(path)
                             .post(requestBody)
                             .build();
@@ -225,28 +230,55 @@ public class OkHttp {
             public void run() {
                 try {
                     OkHttpClient client = new OkHttpClient();
+                    SharedPreferences pref = mContext.getSharedPreferences("mycookie",Context.MODE_PRIVATE);
+                    String sessionid = pref.getString("sessionid","");
                     //用post提交键值对格式的数据
                     Request request = new Request.Builder()
+                            .addHeader("cookie",sessionid)
                             .url(path)
                             .build();
                     Response response = client.newCall(request).execute();
                     if (response.isSuccessful()) {
-                        Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
+//                        InputStream is = null;
+//                        try {
+//                            is = response.body().byteStream();
+//                            Bitmap bitmap = BitmapFactory.decodeStream(is);
+//                            Message msg = new Message();
+//                            msg.what = GETIMGOK;
+//                            msg.obj = bitmap;
+//                            handler.sendMessage(msg);
+//                            System.out.println("Successfully get images");
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        } finally {
+//                            try {
+//                                if (is != null) {
+//                                    is.close();
+//                                }
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+                        byte[] bt = response.body().bytes();
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bt,0,bt.length);
                         Message msg = new Message();
                         msg.what = GETIMGOK;
                         msg.obj = bitmap;
                         handler.sendMessage(msg);
+                        System.out.println("Successfully get images");
                     } else {
                         //TODO 错误报告
                         Message msg = new Message();
                         msg.what = WRANG;
                         handler.sendMessage(msg);
+                        System.out.println("Not response");
                     }
                 } catch (Exception e) {
                     Message msg = new Message();
                     msg.what = EXCEPTION;
                     handler.sendMessage(msg);
                     e.printStackTrace();
+                    System.out.println("Exception");
                 }
             }
         }).start();
