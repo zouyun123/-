@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
@@ -27,9 +28,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     private Context mContext;
 
     public final static int TYPE_ADD = 1;
-    final static int TYPE_PHOTO = 2;
+    private final static int TYPE_PHOTO = 2;
 
-    public  int MAX = 6;
+    private int MAX = 6;
 
     public PhotoAdapter(Context mContext, ArrayList<String> photoPaths) {
         this.photoPaths = photoPaths;
@@ -71,6 +72,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 final RequestOptions options = new RequestOptions();
                 options.centerCrop()
                         .placeholder(me.iwf.photopicker.R.drawable.__picker_ic_photo_black_48dp)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
                         .error(me.iwf.photopicker.R.drawable.__picker_ic_broken_image_black_48dp);
                 Glide.with(mContext)
                         .load(uri)

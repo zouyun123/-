@@ -33,12 +33,14 @@
         </LinearLayout>
 
     </LinearLayout>
+
     <TextView
         android:id="@+id/tv_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="总共计 100 件设备"/>
+        android:text="总共计 100 件设备" />
+
     <ListView
         android:id="@+id/list_alarm"
         android:layout_width="match_parent"

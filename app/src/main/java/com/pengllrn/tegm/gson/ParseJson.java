@@ -2,6 +2,7 @@ package com.pengllrn.tegm.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.pengllrn.tegm.Aoao.AlarmLists;
 import com.pengllrn.tegm.Aoao.ApplicationCheckStatus;
 import com.pengllrn.tegm.Aoao.BuildingLists;
 import com.pengllrn.tegm.Aoao.DamageApplicationDetailLists;
@@ -111,6 +112,12 @@ public class ParseJson {
         Gson gson = new Gson();
         List<AlarmList> alarmLists = new ArrayList<>();
         alarmLists = gson.fromJson(json,new TypeToken<ArrayList<AlarmList>>(){}.getType());
+        return alarmLists;
+    }
+
+    public AlarmLists Json2AlarmLists(String json) {
+        Gson gson = new Gson();
+        AlarmLists alarmLists = gson.fromJson(json,AlarmLists.class);
         return alarmLists;
     }
 

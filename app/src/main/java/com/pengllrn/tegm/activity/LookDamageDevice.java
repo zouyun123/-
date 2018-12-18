@@ -65,7 +65,6 @@ public class LookDamageDevice extends AppCompatActivity {
     private Button btn_refuse;
     private int count = 0;
     private int size = 0;
-    private LookDamageDevice lookDamageDevice;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -88,6 +87,7 @@ public class LookDamageDevice extends AppCompatActivity {
                     break;
                 case 0x2030:
                     try {
+//                        System.out.println("J is " + Constant.J);
 //                        deleteFile(LookDamageDevice.this.getCacheDir(), deviceid + count + ".jpg");
                         File file = new File(LookDamageDevice.this.getCacheDir(), deviceid + count + ".jpg");
                         //将输入流直接转换成图片
@@ -98,9 +98,16 @@ public class LookDamageDevice extends AppCompatActivity {
                         //图片压缩处理
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                         fos.close();
-                        Photos.add(LookDamageDevice.this.getCacheDir().getAbsolutePath()+"/" + deviceid + count + ".jpg");
+//                        if (file.exists()) {
+//                            System.out.println(LookDamageDevice.this.getCacheDir().getAbsolutePath()+"/" + deviceid + count + ".jpg" + "成功建立");
+//                        } else {
+//                            System.out.println(LookDamageDevice.this.getCacheDir().getAbsolutePath()+"/" + deviceid + count + ".jpg" + "未成功建立");
+//                        }
+                        Photos.add(LookDamageDevice.this.getCacheDir().getAbsolutePath() + "/" + deviceid + count + ".jpg");
                         count++;
-                        if(count == size) setRecyclerview();
+                        if(count == size) {
+                            setRecyclerview();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                         System.out.println("Error");
@@ -152,9 +159,9 @@ public class LookDamageDevice extends AppCompatActivity {
         final Intent intent = getIntent();
         applicationid = intent.getStringExtra("applicationid");
         deviceid = intent.getStringExtra("deviceid");
-        for (int i = 0;i < 6;i++) {
-            deleteFile(LookDamageDevice.this.getCacheDir(),deviceid + i + ".jpg");
-        }
+//        for (int i = 0;i < 6;i++) {
+//            deleteFile(LookDamageDevice.this.getCacheDir(),deviceid + i + ".jpg");
+//        }
         HashMap<String,String> hashMap;
         String damageapplicationdetailurl;
         hashMap = AddingUrl.createHashMap1("applicationid",applicationid);
@@ -313,7 +320,6 @@ public class LookDamageDevice extends AppCompatActivity {
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
                 System.out.println("删除单个文件" + parent + "/" + child + "成功！");
-                System.out.println("文件是否存在：" + file.exists());
                 return true;
             } else {
                 System.out.println("删除单个文件" + parent + "/" + child + "失败！");

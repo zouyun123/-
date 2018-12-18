@@ -224,6 +224,42 @@ public class OkHttp {
         }).start();
     }
 
+    public void getFromInternet(final String path) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    //用post提交键值对格式的数据
+                    Request request = new Request.Builder()
+                            .url(path)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    if (response.isSuccessful()) {
+                        String responseData = response.body().string();
+                        Message msg = new Message();
+                        msg.what = GETOK;
+                        msg.obj = responseData;
+                        handler.sendMessage(msg);
+                        System.out.println("Connected");
+                    } else {
+                        //TODO 错误报告
+                        Message msg = new Message();
+                        msg.what = WRANG;
+                        handler.sendMessage(msg);
+                        System.out.println("Not response");
+                    }
+                } catch (IOException e) {
+                    Message msg = new Message();
+                    msg.what = EXCEPTION;
+                    handler.sendMessage(msg);
+                    e.printStackTrace();
+                    System.out.println("Error");
+                }
+            }
+        }).start();
+    }
+
     public void getImageFromInternet(final String path) {
         new Thread(new Runnable() {
             @Override

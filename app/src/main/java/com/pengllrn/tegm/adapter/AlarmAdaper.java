@@ -2,10 +2,10 @@ package com.pengllrn.tegm.adapter;
 
 import android.content.Context;
 
+import com.pengllrn.tegm.Aoao.AlarmDevice;
 import com.pengllrn.tegm.R;
 import com.pengllrn.tegm.base.ListViewAdapter;
 import com.pengllrn.tegm.base.ViewHolder;
-import com.pengllrn.tegm.bean.AlarmList;
 
 import java.util.List;
 
@@ -16,20 +16,20 @@ import java.util.List;
  * https://github.com/pengllrn
  */
 
-public class AlarmAdaper extends ListViewAdapter<AlarmList> {
-    public AlarmAdaper(Context context, List<AlarmList> datas, int layoutId) {
+public class AlarmAdaper extends ListViewAdapter<AlarmDevice> {
+    public AlarmAdaper(Context context, List<AlarmDevice> datas, int layoutId) {
         super(context, datas, layoutId);
     }
 
     @Override
-    public void convert(ViewHolder holder, AlarmList alarmList) {
-        holder.setText(R.id.dev_order,alarmList.getOder());
-        holder.setText(R.id.tv_alarm,alarmList.getAlarmtype());
-        holder.setText(R.id.tv_room,alarmList.getRoom());
-        holder.setText(R.id.tv_name,alarmList.getTypename());
-        holder.setText(R.id.last_update_time,alarmList.getLastupdate());
-        holder.setText(R.id.tv_schoolname,alarmList.getSchoolname());
-        holder.setText(R.id.tv_num,alarmList.getDevnum());
+    public void convert(ViewHolder holder, AlarmDevice alarmDevice) {
+        holder.setText(R.id.dev_order,String.valueOf(alarmDevice.getOrdernum()));
+        holder.setText(R.id.tv_alarm,alarmDevice.getAlarmtype());
+        holder.setText(R.id.tv_room,alarmDevice.getRoomid());
+        holder.setText(R.id.tv_name,alarmDevice.getAlarmtype());
+        holder.setText(R.id.last_update_time,String.valueOf(alarmDevice.getAlarmstart()));
+        holder.setText(R.id.tv_schoolname,alarmDevice.getSchoolid());
+        holder.setText(R.id.tv_num,alarmDevice.getDevicenum());
         holder.setItemListener(R.id.cb_more,R.id.lv_detail);
     }
 }

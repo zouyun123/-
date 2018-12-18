@@ -19,38 +19,42 @@ public class Constant {
      **/
 
     public static final String URL_LOGOUT = SERVER_URL + "logout/";
-    /*
+    /**
     * 用戶註銷
     */
     public static final String URL_MAIN = SERVER_URL + "get_school_list/";
-    /*
+    /**
     * 獲取學校樓棟列表
     */
     public static final String URL_BUILDING = SERVER_URL + "get_buildings_in_school/";
-    /*
+    /**
     * 獲取學校中設備使用情況
     */
     public static final String URL_DEVICE_USAGE = SERVER_URL + "get_devices_usage/";
-   /*
+   /**
    * 獲取學校中的教室
    */
     public static final String URL_ROOM = SERVER_URL + "get_rooms_list/";
-   /*
+   /**
    * 獲取教室中設備
    */
     public static final String URL_DEVICES_IN_ROOM = SERVER_URL + "get_devices_in_room/";
-    /*
+    /**
     * 獲取設備報廢申請列表
     */
     public static final String URL_DAMAGE_APPLICATION = SERVER_URL + "get_property_damage_list/";
-    /*
+    /**
     * 獲取設備詳細報廢申請列表
     */
     public static final String URL_DAMAGE_APPLICATION_DETAIL = SERVER_URL + "get_property_damage_detail/";
-    /*
+    /**
     * 設備報廢處理
     */
     public static final String URL_APPLICATION_CHECK = SERVER_URL + "property_application_check/";
+    /**
+     * 獲取設備預警列表
+     */
+    public static final String URL_GET_ALARM_DEVICE = SERVER_URL + "get_alarm_list/";
     /**
      * DamageApplyActivity,报废申请活动界面，用户填写好报废信息进行报废提交
      **/
@@ -127,5 +131,5 @@ public class Constant {
      **/
     public static String USER_ID;
 
-
+    public static int J;
 }
