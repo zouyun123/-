@@ -25,9 +25,9 @@ public class BuildingListAdapter extends ListViewAdapter<BuildingLists> {
 
     @Override
     public void convert(ViewHolder holder, BuildingLists buildingLists) {
-        holder.setText(R.id.item1,buildingLists.getBuildingname());
+        holder.setText(R.id.item2,buildingLists.getBuildingname());
 //        holder.setText(R.id.item2,buildingList.getTotaldevice());
 //        holder.setText(R.id.item3,buildingList.getUsingdevice());
-        holder.setText(R.id.item2,buildingLists.getSchoolname());
+        holder.setText(R.id.item1,buildingLists.getSchoolname());
     }
 }

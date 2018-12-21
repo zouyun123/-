@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.pengllrn.tegm.Aoao.AddingUrl;
 import com.pengllrn.tegm.Aoao.DevicesUsageLists;
@@ -56,6 +57,11 @@ public class SchoolListFg extends Fragment {
     private List<School> listSchool;
     private boolean flag = false;
     private List<DevicesUsageLists> listDevicesUsage = new ArrayList<DevicesUsageLists>();
+
+    private TextView textView1;
+    private TextView textView2;
+    private TextView textView3;
+    private TextView textView4;
 
 //    public final int GETOK = 0x2020;
 //    public final int WRANG = 0x22;
@@ -111,6 +117,7 @@ public class SchoolListFg extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setTitle();
         list_gis = (ListView) view.findViewById(R.id.list_gis);
         String data = lookDeviceActivity.read("schoolList");
         if (data != null && !data.equals("")) {
@@ -243,4 +250,15 @@ public class SchoolListFg extends Fragment {
 //        }
 //        return listDevicesUsage;
 //    }
+    private void setTitle() {
+        textView1 = (TextView) lookDeviceActivity.findViewById(R.id.text1);
+        textView2 = (TextView) lookDeviceActivity.findViewById(R.id.text2);
+        textView3 = (TextView) lookDeviceActivity.findViewById(R.id.text3);
+        textView4 = (TextView) lookDeviceActivity.findViewById(R.id.text4);
+        textView1.setText("名称");
+        textView2.setText("设备总数");
+        textView3.setText("正在使用");
+        textView4.setText("使用率");
+}
+
 }

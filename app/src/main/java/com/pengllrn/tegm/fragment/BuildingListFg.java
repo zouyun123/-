@@ -61,7 +61,9 @@ public class BuildingListFg extends Fragment {
                     System.out.println("Get Buildinglists");
                     String responseData = (msg.obj).toString();
 //                    final List<BuildingList> listBuilding = mParseJson.Json2Gis(responseData).getBuildingLists();
+                    System.out.println("邹鋆的responsedata为：" + responseData);
                     final List<BuildingLists> listBuilding = mParseJson.BuildingPoint(responseData);
+                    System.out.println("邹鋆的listbuilding：" + listBuilding);
                     if(listBuilding!=null) {
                         list_gis.setAdapter(new BuildingListAdapter(loolDeviceActivity,
                                 listBuilding, R.layout.base_list_item));
@@ -128,7 +130,7 @@ public class BuildingListFg extends Fragment {
 //        okHttp.postDataFromInternet(applyUrl, requestBody);
     }
 
-    public void setTitle() {
+    private void setTitle() {
         textView1 = (TextView) loolDeviceActivity.findViewById(R.id.text1);
         textView2 = (TextView) loolDeviceActivity.findViewById(R.id.text2);
         textView3 = (TextView) loolDeviceActivity.findViewById(R.id.text3);

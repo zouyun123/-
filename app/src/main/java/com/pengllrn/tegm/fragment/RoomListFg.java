@@ -145,7 +145,7 @@ public class RoomListFg extends Fragment {
 //        okHttp.postDataFromInternet(applyUrl, requestBody);
     }
 
-    public void setTitle() {
+    private void setTitle() {
         textView1 = (TextView) loolDeviceActivity.findViewById(R.id.text1);
         textView2 = (TextView) loolDeviceActivity.findViewById(R.id.text2);
         textView3 = (TextView) loolDeviceActivity.findViewById(R.id.text3);

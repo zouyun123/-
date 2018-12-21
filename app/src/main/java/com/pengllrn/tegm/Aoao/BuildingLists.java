@@ -13,6 +13,7 @@ public class BuildingLists {
     public BuildingLists(String buildingname, String schoolname) {
         this.buildingname = buildingname;
         this.schoolname = schoolname;
+
     }
 
     public String getSchoolid() {

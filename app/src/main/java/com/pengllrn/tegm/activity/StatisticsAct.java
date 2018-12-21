@@ -1,11 +1,13 @@
 package com.pengllrn.tegm.activity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,10 +24,15 @@ import com.pengllrn.tegm.bean.School;
 import com.pengllrn.tegm.bean.Statistics;
 import com.pengllrn.tegm.constant.Constant;
 import com.pengllrn.tegm.gson.ParseJson;
-import com.pengllrn.tegm.internet.OkHttp;
 import com.pengllrn.tegm.utils.FileCache;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import lecho.lib.hellocharts.model.Axis;
@@ -35,8 +42,9 @@ import lecho.lib.hellocharts.model.ColumnChartData;
 import lecho.lib.hellocharts.model.SubcolumnValue;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class StatisticsAct extends AppCompatActivity {
@@ -57,6 +65,10 @@ public class StatisticsAct extends AppCompatActivity {
     private List<School> list_School = new ArrayList<>();
 
 
+    //zouyun
+    private JSONArray myarray;//
+
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -64,7 +76,24 @@ public class StatisticsAct extends AppCompatActivity {
             switch (msg.what) {
                 case 0x2017:
                     String responseData = (msg.obj).toString();
-                    List<Statistics> statisticses = mParseJson.Json2Statistics(responseData);
+//                    List<Statistics> statisticses = mParseJson.Json2Statistics(responseData);
+                    List<Statistics> statisticses = new ArrayList<>();
+                    try {
+                        JSONObject object = new JSONObject(responseData);
+                        JSONArray array = object.getJSONArray("property_info");
+                        for(int i = 0; i < array.length(); i++){
+                            JSONObject object1 = array.getJSONObject(i);
+                            String type = object1.getString("device_type");
+                            float value = (float) object1.getDouble("value");
+                            Statistics a = new Statistics(type, value);
+                            statisticses.add(a);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println("资产统计的statics：" + statisticses);
+
                     setChartView(statisticses);
                     tv_info.setText("统计信息如下：");
                     break;
@@ -106,7 +135,8 @@ public class StatisticsAct extends AppCompatActivity {
         myPopuAdapter = new MyPopuAdapter(this);
 
         setCbListener();
-        if (list_School.size() > 0) {
+//        if (list_School.size() > 0) {
+          if(myarray.length() > 0){
             cb_school.setText(listSchool.get(0));
             cb_statistics.setText(listStatistics.get(0));
             getData(listSchool.get(0), listStatistics.get(0));
@@ -185,17 +215,38 @@ public class StatisticsAct extends AppCompatActivity {
     }
 
     private void initDatas() {
-        listStatistics.add("采购统计");
-        listStatistics.add("库存统计");
+//        listStatistics.add("采购统计");
+//        listStatistics.add("库存统计");
         listStatistics.add("价值统计");
-        listStatistics.add("报废统计");
+ //       listStatistics.add("报废统计");
 
         String data = read("schoolList");
+        System.out.println("资产统计的data：" + data);
         if (data != null && !data.equals("")) {
-            list_School = mParseJson.SchoolPoint(data);
-            if (list_School != null) {
-                for (int i = 0; i < list_School.size(); i++) {
-                    listSchool.add(list_School.get(i).getSchoolname());
+//            list_School = mParseJson.SchoolPoint(data);
+            try {
+                JSONObject jsonObject = new JSONObject(data);
+                myarray = jsonObject.getJSONArray("school_list");
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            System.out.println("资产统计的array：" + myarray);
+//            if (list_School != null) {
+//                for (int i = 0; i < list_School.size(); i++) {
+//                    listSchool.add(list_School.get(i).getSchoolname());
+//                }
+//            }
+            if(myarray.length() != 0){
+                for(int i = 0; i < myarray.length(); i++){
+                    try {
+                        JSONObject myobject = myarray.getJSONObject(i);
+                        String schoolname = myobject.getString("schoolname");
+                        listSchool.add(schoolname);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("资产统计的schoolname：" + listSchool);
                 }
             }
         }
@@ -223,17 +274,36 @@ public class StatisticsAct extends AppCompatActivity {
                 break;
 
         }
-        for (int i = 0; i < list_School.size(); i++) {
-            if (school.equals(list_School.get(i).getSchoolname())) {
-                schoolid = list_School.get(i).getId();
-                break;
+//        for (int i = 0; i < list_School.size(); i++) {
+//            if (school.equals(list_School.get(i).getSchoolname())) {
+//                schoolid = list_School.get(i).getId();
+//                break;
+//            }
+//        }
+
+        //zouyun
+        for(int i = 0; i < myarray.length(); i++){
+            try {
+                JSONObject object = myarray.getJSONObject(i);
+                if(school.equals(object.getString("schoolname"))){
+                    schoolid = object.getString("schoolid");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
+//        System.out.println("schoolid: " + schoolid);
+
+
         if (!school.equals("") || type.equals("0")) {
             //访问网络
-            OkHttp okHttp = new OkHttp(getApplicationContext(), mHandler);
-            RequestBody requestBody = new FormBody.Builder().add("school", schoolid).add("type", type).build();
-            okHttp.postDataFromInternet(applyUrl, requestBody);
+//            OkHttp okHttp = new OkHttp(getApplicationContext(), mHandler);
+//            RequestBody requestBody = new FormBody.Builder().add("school", schoolid).add("type", type).build();
+//            okHttp.postDataFromInternet(applyUrl, requestBody);
+            String url = getUrl2("http://47.107.37.50:8000/get_school_property/", getUrl1("schoolid", schoolid));
+            System.out.println("资产统计的url：" + url);
+            getschool_statics(url);
+
         }
     }
 
@@ -272,9 +342,75 @@ public class StatisticsAct extends AppCompatActivity {
         //设置X轴显示在底部，并且显示每个属性的Lable，字体颜色为黑色，X轴的名字为“学历”，每个柱子的Lable斜着显示，距离X轴的距离为8
         columnChartData.setAxisXBottom(new Axis(axisXValues).setHasLines(true).setTextColor(Color.BLACK).setHasTiltedLabels(true).setMaxLabelChars(8));
         //属性值含义同X轴
-        columnChartData.setAxisYLeft(new Axis().setHasLines(true).setName("数量").setTextColor(Color.BLACK).setMaxLabelChars(5));
+        columnChartData.setAxisYLeft(new Axis().setHasLines(true).setName("价值").setTextColor(Color.BLACK).setMaxLabelChars(5));
         //最后将所有值显示在View中
         columnchart.setColumnChartData(columnChartData);
 
     }
+
+    //ToDo zouyun 获取学校资产统计
+    public void getschool_statics(final String url){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    SharedPreferences pref = getSharedPreferences("mycookie", Context.MODE_PRIVATE);
+                    String sessionid = pref.getString("sessionid", " ");
+
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder().addHeader("cookie", sessionid).url(url).build();
+                    Response response = client.newCall(request).execute();
+                    String responsedata = response.body().string();
+                    System.out.println("资产统计的responsedata：" + responsedata);
+
+                    if(response.isSuccessful()){
+                        Message msg = new Message();
+                        msg.what = 0x2017;
+                        msg.obj = responsedata;
+                        mHandler.sendMessage(msg);
+                    }else{
+                        System.out.println("资产统计的网络请求失败");
+                    }
+                }catch(Exception e){
+                    System.out.println("资产统计的网络请求异常");
+                }
+            }
+        }).start();
+    }
+
+
+
+
+
+
+    // ToDo zouyun 携带信息get请求的url的转换方法1
+    public static HashMap<String, String> getUrl1(String key1, String value1){
+        HashMap hashmap = new HashMap();
+        hashmap.put(key1, value1);
+        return hashmap;
+    }
+    // ToDo zouyun携带信息get请求的url的转换方法2
+    public static String getUrl2(String actionUrl, HashMap<String, String> paramsMap) {
+        StringBuilder myBuilder = new StringBuilder();
+        String a = null;
+        try {
+            //处理参数
+            int pos = 0;
+            for(String key : paramsMap.keySet()) {
+                if (pos > 0) {
+                    myBuilder.append("&");
+                }
+                //对参数进行URLEncoder
+                myBuilder.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
+                pos++;
+            }
+            //补全请求地址
+            String requestUrl = String.format("%s?%s", actionUrl, myBuilder.toString());
+            a = requestUrl;
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return a;
+    }
+
 }
